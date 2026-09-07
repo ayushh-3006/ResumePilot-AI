@@ -115,7 +115,7 @@ Please format this data into a clean, professional, ATS-friendly resume layout w
     });
     console.log("Success:\n", response.choices[0]?.message?.content);
   } catch (e) {
-    console.error("Failed:", e.message);
+    console.error("Failed:", e instanceof Error ? e.message : String(e));
   }
 }
 
