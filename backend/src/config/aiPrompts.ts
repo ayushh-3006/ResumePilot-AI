@@ -147,7 +147,7 @@ STRICT RULES:
   questionBank: {
     model: "qwen/qwen3.6-27b",
     temperature: 0.5,
-    max_tokens: 5000,
+    max_tokens: 900,
     systemPrompt: `You are an expert technical interviewer and hiring manager in the requested industry.
 Your task is to generate a highly tailored, industry-specific interview question bank.
 
