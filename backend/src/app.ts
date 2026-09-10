@@ -37,24 +37,30 @@ const app = express();
 // Webhook routes (MUST be before express.json() because it needs raw body)
 app.use("/api/webhooks", webhookRoutes);
 
+const allowedOrigins = [
+  "https://resume-pilot-ai-gamma.vercel.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.FRONTEND_URL,
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://localhost:5173",
-      ].filter(Boolean); // Remove undefined values
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.options(
+  /.*/,
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(express.json());
