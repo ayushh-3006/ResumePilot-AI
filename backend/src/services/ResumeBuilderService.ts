@@ -26,7 +26,7 @@ export class ResumeBuilderService {
     return this.aiProvider.buildResumeFromChat(chatHistory, currentData);
   }
 
-  async exportPdf(data: any, theme: string): Promise<string> {
+  async exportPdf(data: any, theme: string): Promise<Buffer> {
     const fileName = `resume_${Date.now()}.pdf`;
     return this.pdfGenerator.generate(data, fileName); // Assuming generator handles theme implicitly or data structure is enough
   }

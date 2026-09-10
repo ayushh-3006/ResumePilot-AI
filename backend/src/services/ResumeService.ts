@@ -45,10 +45,12 @@ export class ResumeService {
       jobDescription,
     );
 
-    const fileName = `resume-${uuidv4()}.pdf`;
-    // PuppeteerGenerator accepts the data object
-    await this.pdfGenerator.generate(enhancedData, fileName);
-    const pdfUrl = `/uploads/${fileName}`;
+    // Generate the PDF buffer (we no longer save to ephemeral disk)
+    const pdfBuffer = await this.pdfGenerator.generate(enhancedData);
+    
+    // Provide a dummy URL or if cloud storage was used, the real URL.
+    // We avoid ephemeral local storage for Render compatibility.
+    const pdfUrl = `/api/uploads/unavailable`;
 
     const saved = await this.repository.save({
       userId,

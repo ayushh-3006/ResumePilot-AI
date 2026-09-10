@@ -1,6 +1,4 @@
 import puppeteer from "puppeteer";
-import fs from "fs";
-import path from "path";
 import { IPDFGenerator } from "../interfaces/IPDFGenerator.js";
 import { ResumeTemplate } from "../templates/ResumeTemplate.js";
 
@@ -9,20 +7,14 @@ import { ResumeTemplate } from "../templates/ResumeTemplate.js";
  * SOLID — D (Dependency Inversion): Implements IPDFGenerator interface.
  */
 export class PuppeteerGenerator implements IPDFGenerator {
-  async generate(data: any, fileName: string): Promise<string> {
-    const uploadDir = path.resolve("uploads");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, fileName);
-
+  async generate(data: any, fileName?: string): Promise<Buffer> {
     // 1. Generate HTML from data
     const htmlContent = ResumeTemplate(data);
 
     // 2. Launch Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -33,8 +25,7 @@ export class PuppeteerGenerator implements IPDFGenerator {
       await page.setContent(htmlContent, { waitUntil: "load" });
 
       // Generate PDF with professional margins
-      await page.pdf({
-        path: filePath,
+      const pdfBuffer = await page.pdf({
         format: "A4",
         printBackground: true,
         margin: {
@@ -45,7 +36,7 @@ export class PuppeteerGenerator implements IPDFGenerator {
         },
       });
 
-      return filePath;
+      return Buffer.from(pdfBuffer);
     } finally {
       await browser.close();
     }

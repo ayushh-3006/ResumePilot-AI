@@ -4,10 +4,10 @@ import { clerkAuth } from "../middlewares/clerkAuth.js";
 import { VisionAnalysisController } from "../controllers/VisionAnalysisController.js";
 import multer from "multer";
 
-// In-memory upload for audio blobs (max 25 MB)
+// In-memory upload for audio blobs (max 10 MB)
 const audioUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 25 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     // Gracefully accept all audio/video mimetypes to avoid strict validation crashes.
     // If it's a blob, it might be audio/webm, video/webm, audio/mp4, etc.

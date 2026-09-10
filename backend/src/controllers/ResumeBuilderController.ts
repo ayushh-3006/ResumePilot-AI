@@ -79,19 +79,17 @@ export class ResumeBuilderController {
         return;
       }
 
-      const filePath = await this.builderService.exportPdf(
+      const pdfBuffer = await this.builderService.exportPdf(
         resumeData,
         theme || "default",
       );
 
-      // Send file and clean up
-      res.download(filePath, `resume_${Date.now()}.pdf`, (err) => {
-        if (err) console.error("Error downloading file:", err);
-        // Cleanup the generated file
-        fs.unlink(filePath, (unlinkErr) => {
-          if (unlinkErr) console.error("Error deleting temp file:", unlinkErr);
-        });
-      });
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="resume_${Date.now()}.pdf"`
+      );
+      res.send(pdfBuffer);
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
